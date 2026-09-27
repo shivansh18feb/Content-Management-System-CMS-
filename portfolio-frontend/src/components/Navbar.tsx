@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({ siteName = 'Portfolio' }) => {
 
           {/* CMS Admin Link */}
           <a
-            href="https://content-management-system-cms-nm1y-gnegm5koj.vercel.app"
+            href="https://content-management-system-cms-nm1y.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 transition"
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({ siteName = 'Portfolio' }) => {
             </a>
           ))}
           <a
-            href="http://localhost:5174https://content-management-system-cms-nm1y-gnegm5koj.vercel.app"
+            href="https://content-management-system-cms-nm1y.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-xs font-semibold text-indigo-400 pt-2 border-t border-slate-800"

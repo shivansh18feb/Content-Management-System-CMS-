@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center space-x-4">
         {/* Link to public portfolio */}
         <a
-          href="https://content-management-system-tnle7fzty.vercel.app"
+          href="https://content-management-system-cms-orpin.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center space-x-2 text-xs font-medium text-slate-400 hover:text-slate-200 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700/60 transition"
