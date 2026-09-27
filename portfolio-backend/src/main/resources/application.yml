@@ -8,9 +8,9 @@ spring:
     name: portfolio-backend
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/portfolio_cms_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:182006}
+    url: ${jdbc:postgresql://ep-ancient-tooth-b3mtch2l-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?user=neondb_owner&password=npg_SerB3JD5GyvH&sslmode=require&channelBinding=require}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: PortfolioHikariCP
@@ -59,8 +59,10 @@ app:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: ${JWT_EXPIRATION_MS:900000} # 15 minutes
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
+
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:5174,http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:5174}
+
   storage:
     upload-dir: ${UPLOAD_DIR:./uploads}
     max-file-size-bytes: 15728640 # 15MB
@@ -71,26 +73,12 @@ app:
       - image/svg+xml
       - image/gif
       - application/pdf
+
   mail:
     from: ${APP_MAIL_FROM:no-reply@portfolio.com}
     notify-to: ${APP_MAIL_NOTIFY_TO:admin@portfolio.com}
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
   health:
     mail:
       enabled: false
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operationsSorter: method
-    tagsSorter: alpha

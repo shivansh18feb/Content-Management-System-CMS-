@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.cms.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -14,18 +15,27 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
-        log.warn("Unauthorized error at {}: {}", request.getRequestURI(), authException.getMessage());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    public void commence(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException
+    ) throws IOException {
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        ApiResponse<Void> apiResponse = ApiResponse.error("Unauthorized: Please provide a valid Bearer token");
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        ApiResponse<?> apiResponse = ApiResponse.error(
+                "Authentication required"
+        );
+
+        response.getWriter().write(
+                objectMapper.writeValueAsString(apiResponse)
+        );
     }
 }

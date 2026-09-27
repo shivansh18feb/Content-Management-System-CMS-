@@ -72,7 +72,9 @@ export interface Skill {
 }
 
 export interface SkillGroup {
-  category: SkillCategory;
+  id: number;
+  name: string;
+  displayOrder: number;
   skills: Skill[];
 }
 

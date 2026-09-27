@@ -380,48 +380,80 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Technical Skills Section */}
-      <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-900 bg-slate-950/60">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="text-center space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">Competencies</span>
-            <h2 className="text-3xl font-bold text-white">Technical Arsenal</h2>
-            <p className="text-sm text-slate-400 max-w-lg mx-auto">Core frameworks, cloud orchestration, databases, and programming languages</p>
-          </div>
+<section
+  id="skills"
+  className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-900 bg-slate-950/60"
+>
+  <div className="max-w-5xl mx-auto space-y-10">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {skillGroups.map((group) => (
-              <div key={group.category.id} className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4">
-                <h3 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center justify-between">
-                  <span>{group.category.name}</span>
-                  <span className="text-xs font-mono text-indigo-400 font-normal">{group.skills.length} tools</span>
-                </h3>
+    <div className="text-center space-y-2">
+      <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+        Competencies
+      </span>
 
-                <div className="space-y-3">
-                  {group.skills.map((skill) => (
-                    <div key={skill.id} className="space-y-1">
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="font-semibold text-slate-200">{skill.name}</span>
-                        <div className="flex items-center gap-2">
-                          {skill.yearsOfExperience && (
-                            <span className="text-[10px] text-slate-500">{skill.yearsOfExperience} yrs</span>
-                          )}
-                          <span className="font-mono text-indigo-400 font-medium">{skill.proficiency}%</span>
-                        </div>
-                      </div>
-                      <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                        <div
-                          className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-700"
-                          style={{ width: `${skill.proficiency}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
+      <h2 className="text-3xl font-bold text-white">
+        Technical Arsenal
+      </h2>
+
+      <p className="text-sm text-slate-400 max-w-lg mx-auto">
+        Core frameworks, cloud orchestration, databases, and programming languages
+      </p>
+    </div>
+
+    {skillGroups.map((group, idx) => (
+      <div
+      key={`${group.id}-${group.name}-${idx}`}
+        className="glass-card p-6 rounded-2xl border border-slate-800 space-y-4"
+      >
+        <h3 className="font-bold text-white text-base border-b border-slate-800 pb-3 flex items-center justify-between">
+          <span>{group.name}</span>
+
+          <span className="text-xs font-mono text-indigo-400 font-normal">
+            {group.skills.length} tools
+          </span>
+        </h3>
+
+        <div className="space-y-3">
+          {group.skills.map((skill, idx) => (
+  <div
+    key={`${group.id}-${skill.id}-${skill.name}-${idx}`}
+    className="space-y-1"
+  >
+
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-slate-200">
+                  {skill.name}
+                </span>
+
+                <div className="flex items-center gap-2">
+                  {skill.yearsOfExperience && (
+                    <span className="text-[10px] text-slate-500">
+                      {skill.yearsOfExperience} yrs
+                    </span>
+                  )}
+
+                  <span className="font-mono text-indigo-400 font-medium">
+                    {skill.proficiency}%
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                <div
+                  className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-700"
+                  style={{ width: `${skill.proficiency}%` }}
+                />
+              </div>
+
+            </div>
+          ))}
         </div>
-      </section>
+
+      </div>
+    ))}
+
+  </div>
+</section>
 
       {/* Experience & Career Journey */}
       <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-900">
@@ -610,11 +642,14 @@ export const Home: React.FC = () => {
                 >
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-1.5">
-                      {b.tags?.map((t) => (
-                        <span key={t.id} className="text-[10px] text-indigo-400 font-mono">
-                          #{t.name}
-                        </span>
-                      ))}
+                      {b.tags?.map((t, idx) => (
+                    <span
+                      key={`${t.id}-${t.name}-${idx}`}
+                      className="text-[10px] text-indigo-400 font-mono"
+                    >
+                      #{t.name}
+                    </span>
+                  ))}
                     </div>
 
                     <h3 className="font-bold text-lg text-white group-hover:text-indigo-400 transition">

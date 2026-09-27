@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { ApiResponse, Skill, SkillCategory } from '../types';
 
 export const Skills: React.FC = () => {
-  const [categories, setCategories] = useState<{ category: SkillCategory; skills: Skill[] }[]>([]);
+  const [categories, setCategories] = useState<(SkillCategory & { skills: Skill[] })[]>([]);
   const [flatCategories, setFlatCategories] = useState<SkillCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +39,7 @@ export const Skills: React.FC = () => {
     try {
       setLoading(true);
       const [groupedRes, catRes] = await Promise.all([
-        api.get<ApiResponse<{ category: SkillCategory; skills: Skill[] }[]>>('/api/public/skills'),
+        api.get<ApiResponse<(SkillCategory & { skills: Skill[] })[]>>('/api/public/skills'),
         api.get<ApiResponse<SkillCategory[]>>('/api/admin/skills/categories'),
       ]);
 
@@ -180,23 +180,23 @@ export const Skills: React.FC = () => {
       ) : (
         <div className="space-y-6">
           {categories.map((group) => (
-            <div key={group.category.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div key={group.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
               <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-800">
                 <div className="flex items-center space-x-3">
-                  <h3 className="font-bold text-lg text-white">{group.category.name}</h3>
+                  <h3 className="font-bold text-lg text-white">{group.name}</h3>
                   <span className="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono">
                     {group.skills.length} skills
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => handleOpenCreateSkill(group.category.id)}
+                    onClick={() => handleOpenCreateSkill(group.id)}
                     className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg transition"
                   >
                     + Add to category
                   </button>
                   <button
-                    onClick={() => handleDeleteCategory(group.category.id)}
+                    onClick={() => handleDeleteCategory(group.id)}
                     title="Delete category"
                     className="p-1 text-slate-500 hover:text-red-400 transition"
                   >
