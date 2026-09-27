@@ -1,0 +1,127 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test-and-build:
+    name: Backend Test & Build (Spring Boot 3 + Java 21)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: portfolio_cms_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Maven Tests
+        working-directory: ./portfolio-backend
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/portfolio_cms_db
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgrespassword
+          JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+        run: mvn clean test
+
+      - name: Package JAR Artifact
+        working-directory: ./portfolio-backend
+        run: mvn package -DskipTests
+
+  cms-build:
+    name: Admin CMS Build (Vite + React + TS)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './portfolio-cms/package.json'
+
+      - name: Install CMS Dependencies
+        working-directory: ./portfolio-cms
+        run: npm ci || npm install
+
+      - name: Type-Check & Build CMS
+        working-directory: ./portfolio-cms
+        run: npm run build
+
+  portfolio-build:
+    name: Public Portfolio Build (Vite + React + TS)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './portfolio-frontend/package.json'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./portfolio-frontend
+        run: npm ci || npm install
+
+      - name: Type-Check & Build Portfolio
+        working-directory: ./portfolio-frontend
+        run: npm run build
+
+  docker-verification:
+    name: Docker Containerization Build Check
+    needs: [backend-test-and-build, cms-build, portfolio-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./portfolio-backend
+          push: false
+          tags: portfolio-backend:ci
+
+      - name: Build CMS Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./portfolio-cms
+          push: false
+          tags: portfolio-cms:ci
+
+      - name: Build Portfolio Frontend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./portfolio-frontend
+          push: false
+          tags: portfolio-frontend:ci
