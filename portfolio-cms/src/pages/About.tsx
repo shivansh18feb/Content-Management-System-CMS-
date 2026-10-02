@@ -75,9 +75,8 @@ export const AboutPage: React.FC = () => {
       const media = res.data.data;
 
       const resumeUrl = media.fileUrl.startsWith('http')
-        ? media.fileUrl
-        : `${API_BASE_URL}${media.fileUrl}`;
-
+  ? media.fileUrl
+  : `${API_BASE_URL.replace(/\/+$/, '')}/${media.fileUrl.replace(/^\/+/, '')}`;
       setForm((prev) => ({
         ...prev,
         resumeUrl,
