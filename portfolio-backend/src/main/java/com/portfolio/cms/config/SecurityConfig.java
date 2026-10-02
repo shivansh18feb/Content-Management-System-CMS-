@@ -79,7 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
 
                         // Uploaded static media
-                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
 
                         // Actuator health & Swagger documentation
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
