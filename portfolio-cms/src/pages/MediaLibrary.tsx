@@ -37,7 +37,7 @@ export const MediaLibrary: React.FC = () => {
 
     setUploading(true);
     try {
-      await api.post('/api/admin/media/upload', formData, {
+      await api.post('/api/admin/media', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       fetchMedia();
