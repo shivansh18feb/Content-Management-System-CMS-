@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { UserCheck, Save, Check } from 'lucide-react';
-import { api } from '../services/api';
+import React, { useEffect, useRef, useState } from 'react';
+import { UserCheck, Save, Check, Upload, FileText } from 'lucide-react';
+import { api, API_BASE_URL } from '../services/api';
 import { ApiResponse, About } from '../types';
 
 export const AboutPage: React.FC = () => {
@@ -22,6 +22,8 @@ export const AboutPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchAbout();
@@ -40,6 +42,65 @@ export const AboutPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const handleResumeUpload = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  if (file.type !== 'application/pdf') {
+    alert('Please upload a PDF resume.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  setUploadingResume(true);
+
+  try {
+    const res = await api.post<ApiResponse<any>>(
+      '/api/admin/media',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    if (res.data.success && res.data.data) {
+      const media = res.data.data;
+
+      const resumeUrl = media.fileUrl.startsWith('http')
+        ? media.fileUrl
+        : `${API_BASE_URL}${media.fileUrl}`;
+
+      setForm((prev) => ({
+        ...prev,
+        resumeUrl,
+      }));
+
+      alert(
+        'Resume uploaded successfully. Click Save Profile Changes.'
+      );
+    }
+  } catch (err: any) {
+    alert(
+      err.response?.data?.message ||
+        err.message ||
+        'Resume upload failed'
+    );
+  } finally {
+    setUploadingResume(false);
+
+    if (resumeInputRef.current) {
+      resumeInputRef.current.value = '';
+    }
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,14 +223,48 @@ export const AboutPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Resume Download URL</label>
-            <input
-              type="url"
-              value={form.resumeUrl || ''}
-              onChange={(e) => setForm({ ...form, resumeUrl: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-            />
-          </div>
+  <label className="block text-xs font-semibold text-slate-300 mb-1">
+    Resume / CV
+  </label>
+
+  <input
+    ref={resumeInputRef}
+    type="file"
+    accept="application/pdf"
+    onChange={handleResumeUpload}
+    className="hidden"
+  />
+
+  <div className="flex items-center gap-2">
+    <button
+      type="button"
+      onClick={() => resumeInputRef.current?.click()}
+      disabled={uploadingResume}
+      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition disabled:opacity-50"
+    >
+      <Upload className="w-4 h-4" />
+      {uploadingResume ? 'Uploading...' : 'Upload Resume'}
+    </button>
+
+    {form.resumeUrl && (
+      <a
+        href={form.resumeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300"
+      >
+        <FileText className="w-4 h-4" />
+        View Resume
+      </a>
+    )}
+  </div>
+
+  {form.resumeUrl && (
+    <p className="text-[11px] text-slate-500 mt-2 truncate">
+      {form.resumeUrl}
+    </p>
+  )}
+</div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

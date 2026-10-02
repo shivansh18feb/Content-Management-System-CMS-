@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Upload, Copy, Trash2, Check, File, Image as ImageIcon, Search } from 'lucide-react';
-import { api } from '../services/api';
+import { api, API_BASE_URL } from '../services/api';
 import { ApiResponse, PagedResponse, MediaFile } from '../types';
 
 export const MediaLibrary: React.FC = () => {
@@ -51,7 +51,7 @@ export const MediaLibrary: React.FC = () => {
 
   const handleCopyUrl = (id: number, url: string) => {
     // If url is relative, construct full URL
-    const fullUrl = url.startsWith('http') ? url : `http://localhost:8080${url}`;
+    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -112,7 +112,9 @@ export const MediaLibrary: React.FC = () => {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {files.map((file) => {
-              const fullUrl = file.fileUrl.startsWith('http') ? file.fileUrl : `http://localhost:8080${file.fileUrl}`;
+              const fullUrl = file.fileUrl.startsWith('http')
+  ? file.fileUrl
+  : `${API_BASE_URL}${file.fileUrl}`;
               const isImage = file.contentType.startsWith('image/');
               return (
                 <div
